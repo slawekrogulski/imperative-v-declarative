@@ -1,3 +1,7 @@
+# bloop and metals
+.bloop
+.bsp
+
 # scala 3
 .tasty
 
