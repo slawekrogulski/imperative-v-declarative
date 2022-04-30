@@ -9,16 +9,20 @@ import wordcount.WordCount.{Word, Words}
 
 class WordCountTest extends AnyFlatSpec with should.Matchers {
   import WordCountTest._
+  import WordCount._
 
   "imperative and declarative word count implementations" should "be equivalent" in {
     forAll(wordLists) {
       wordList =>
-        val imperative = WordCount.imperative(wordList)
-        val declarative_groupBy = WordCount.declarative_groupBy(wordList)
-        val declarative_foldLeft = WordCount.declarative_foldLeft(wordList)
-
-        imperative shouldBe declarative_groupBy
-        imperative shouldBe declarative_foldLeft
+        List(
+          imperative,
+          declarative_groupBy,
+          declarative_foldLeft
+          ).map(_(wordList))
+          .sliding(2, 1)
+          .foreach{
+            case e1::e2::Nil => e1 shouldBe e2
+          }
     }
   }
 }
