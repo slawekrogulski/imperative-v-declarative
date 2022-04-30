@@ -20,12 +20,22 @@ object WordCount {
         wordCounts.update(word, count + 1)
       wordCounts.toMap
   }
-  
-  object declarative extends WordCount {
+
+  object declarative_groupBy extends WordCount {
     def apply(words: Words): WordCounts =
       words
         .groupBy(identity)
         .view.mapValues(_.size)
         .toMap
+  }
+
+  object declarative_foldLeft extends WordCount {
+    private val empty:WordCounts = Map.empty
+
+    def apply(words: Words): WordCounts =
+      words.foldLeft(empty){
+        (wcs, w) =>
+          wcs + (w -> (wcs.getOrElse(w, 0) + 1))
+      }
   }
 }
