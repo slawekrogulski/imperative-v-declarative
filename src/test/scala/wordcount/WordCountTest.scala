@@ -5,7 +5,6 @@ import flatspec.*
 import matchers.*
 import org.scalatestplus.scalacheck.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import wordcount.WordCount.{Word, Words}
 
 class WordCountTest extends AnyFlatSpec with should.Matchers {
   import WordCountTest._
@@ -28,6 +27,7 @@ class WordCountTest extends AnyFlatSpec with should.Matchers {
 }
 object WordCountTest {
   import org.scalacheck.Gen
+  import wordcount.WordCount.{Word, Words}
 
   val words: Gen[Word] = Gen.alphaUpperChar.map(_.toString)
   val wordLists: Gen[Words] = Gen.listOf[Word](words)
