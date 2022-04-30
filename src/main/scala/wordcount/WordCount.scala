@@ -24,8 +24,8 @@ object WordCount {
   object declarative_groupBy extends WordCount {
     def apply(words: Words): WordCounts =
       words
-        .groupBy(identity)
-        .view.mapValues(_.size)
+        .groupBy(identity) // map
+        .view.mapValues(_.size) // reduce
         .toMap
   }
 
