@@ -11,15 +11,15 @@ class WordCountTest extends AnyFlatSpec with should.Matchers {
   import WordCountTest._
 
   "imperative and declarative word count implementations" should "be equivalent" in {
-    forAll(words) {
-      ws =>
-        WordCount.imperative(ws) shouldBe WordCount.declarative(ws)
+    forAll(wordLists) {
+      wordList =>
+        WordCount.imperative(wordList) shouldBe WordCount.declarative(wordList)
     }
   }
 }
 object WordCountTest {
   import org.scalacheck.Gen
 
-  val word: Gen[Word] = Gen.alphaUpperChar.map(_.toString)
-  val words: Gen[Words] = Gen.listOf[Word](word)
+  val words: Gen[Word] = Gen.alphaUpperChar.map(_.toString)
+  val wordLists: Gen[Words] = Gen.listOf[Word](words)
 }
