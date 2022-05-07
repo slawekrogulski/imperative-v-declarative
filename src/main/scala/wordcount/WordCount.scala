@@ -16,8 +16,8 @@ object WordCount {
       val it = words.iterator
       while (it.hasNext)
         val word = it.next()
-        val count = wordCounts.getOrElse(word, 0)
-        wordCounts.update(word, count + 1)
+        val count = wordCounts.getOrElse(word, 0) + 1
+        wordCounts.update(word, count)
       wordCounts.toMap
   }
 
