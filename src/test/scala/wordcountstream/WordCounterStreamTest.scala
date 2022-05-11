@@ -12,15 +12,25 @@ class WordCounterStreamTest extends AnyFlatSpec with should.Matchers {
 
   "Imperative and Declarative" should "be equivalent" in {
     forAll(wordLists) {
-      case wl =>
-        val (wl1, wl2) = wl.duplicate
-        val wc1 = Imperative(wl1)
-        val wc2 = Declarative(wl2)
-        while (wc1.hasNext && wc2.hasNext) {
-          wc1.next() shouldBe wc2.next()
+      case listOfWordLists =>
+        val counterObjects = List(Imperative, Declarative, ImperativeJava)
+        listOfWordLists.length shouldBe counterObjects.length
+        val counters = {
+          counterObjects.zip(listOfWordLists)
+        }.map {
+          case (counter, wordList) => counter(wordList)
         }
-        wc1 shouldBe empty
-        wc2 shouldBe empty
+
+        while (counters.forall(_.hasNext)) {
+          counters
+            .map(_.next())
+            .sliding(2)
+            .foldLeft(succeed) {
+              case (_, wc1::wc2::Nil) => wc1 shouldBe wc2
+              case (_, window)        => fail(s"did not match sliding window: $window")
+            }
+        }
+        counters.foreach(_ shouldBe empty)
     }
   }
 
@@ -31,8 +41,18 @@ object WordCounterStreamTest {
   import wordcountstream.WordCounterStream._
 
   val word: Gen[Word] = Gen.alphaUpperChar.map(_.toString)
-  val wordLists: Gen[Words] = Gen.listOf[Word](word).map(_.iterator)
+  val wordLists: Gen[List[Words]] = {
+    Gen.listOf[Word](word).map {
+      wl =>
+        List(wl.iterator, wl.iterator, wl.iterator)
+    }
+  }
 
 
+  object ImperativeJava extends WordCounterStream {
+    override def apply(words: Words): WordCounts =
+      import scala.jdk.CollectionConverters._
+      WordCounterStreamJava.count(words.asJava).asScala
+  }
 
 }

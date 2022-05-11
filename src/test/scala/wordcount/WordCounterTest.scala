@@ -21,10 +21,9 @@ class WordCounterTest extends AnyFlatSpec with should.Matchers {
           declarative_foldLeft
           ).map(_(wordList))
           .sliding(2, 1)
-          .collect{
-            case e1::e2::Nil => e1 -> e2
-          }.foreach {
-            case (e1, e2) => e1 shouldBe e2
+          .foldLeft(succeed) {
+            case (_, e1::e2::Nil) => e1 shouldBe e2
+            case (_, window)      => fail(s"did not match sliding window: $window")
           }
     }
   }
