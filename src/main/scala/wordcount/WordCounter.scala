@@ -1,15 +1,15 @@
 package wordcount
 
-object WordCount {
+object WordCounter {
   type Word = String
   type Words = List[Word]
   type Count = Int
   type WordCounts = Map[Word, Count]
 
-  trait WordCount {
+  trait WordCounter {
     def apply(words: Words): WordCounts
   }
-  object imperative extends WordCount {
+  object imperative extends WordCounter {
     def apply(words: Words): WordCounts =
       import scala.collection.mutable
       val wordCounts = mutable.Map.empty[Word, Count]
@@ -21,7 +21,7 @@ object WordCount {
       wordCounts.toMap
   }
 
-  object declarative_groupBy extends WordCount {
+  object declarative_groupBy extends WordCounter {
     def apply(words: Words): WordCounts =
       words
         .groupBy(identity) // map
@@ -29,7 +29,7 @@ object WordCount {
         .toMap
   }
 
-  object declarative_foldLeft extends WordCount {
+  object declarative_foldLeft extends WordCounter {
     private val empty:WordCounts = Map.empty
 
     def apply(words: Words): WordCounts =

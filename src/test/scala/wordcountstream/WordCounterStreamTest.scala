@@ -6,9 +6,9 @@ import matchers.*
 import org.scalatestplus.scalacheck.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 
-class WordCountStreamTest extends AnyFlatSpec with should.Matchers {
-  import WordCountStream._
-  import WordCountStreamTest._
+class WordCounterStreamTest extends AnyFlatSpec with should.Matchers {
+  import WordCounterStream._
+  import WordCounterStreamTest._
 
   "Imperative and Declarative" should "be equivalent" in {
     forAll(wordLists) {
@@ -26,9 +26,9 @@ class WordCountStreamTest extends AnyFlatSpec with should.Matchers {
 
 }
 
-object WordCountStreamTest {
+object WordCounterStreamTest {
   import org.scalacheck.Gen
-  import wordcountstream.WordCountStream._
+  import wordcountstream.WordCounterStream._
 
   val word: Gen[Word] = Gen.alphaUpperChar.map(_.toString)
   val wordLists: Gen[Words] = Gen.listOf[Word](word).map(_.iterator)

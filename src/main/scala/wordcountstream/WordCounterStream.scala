@@ -1,38 +1,40 @@
 package wordcountstream
 
-object WordCountStream {
+object WordCounterStream {
   type Count = Int
   type Word = String
   type Words = Iterator[Word]
-  type WordCount = (Word, Count)
+  case class WordCount(word:Word, count:Count) {
+    def tupled: (Word, Count) = word -> count
+  }
   type WordCounts = Iterator[WordCount]
-  trait WordCountStream {
+  trait WordCounterStream {
     def apply(words: Words): WordCounts
   }
 
-  object Imperative extends WordCountStream {
+  object Imperative extends WordCounterStream {
     override def apply(words: Words): WordCounts = new Iterator[WordCount] {
       import scala.collection.mutable
       private val wordCounts = mutable.Map.empty[Word, Count]
 
       override def next(): WordCount =
         val word = words.next()
-        val count = wordCounts.getOrElse(word, 0) + 1
-        wordCounts.update(word, count)
-        word -> count
+        val wordCount = WordCount(word, wordCounts.getOrElse(word, 0) + 1)
+        wordCounts.update.tupled(wordCount.tupled)
+        wordCount
 
       override def hasNext: Boolean = words.hasNext
     }
   }
 
-  object Declarative extends WordCountStream {
+  object Declarative extends WordCounterStream {
     private val empty = Map.empty[Word, Count] -> Option.empty[WordCount]
 
     override def apply(words: Words): WordCounts =
       words.scanLeft(empty) {
         case ((wordCounts, _), word) =>
-          val wordCount = word -> (wordCounts.getOrElse(word, 0) + 1)
-          (wordCounts + wordCount, Option(wordCount))
+          val wordCount = WordCount(word, wordCounts.getOrElse(word, 0) + 1)
+          (wordCounts + wordCount.tupled, Option(wordCount))
       }.collect {
         case (_, Some(wc)) =>
           wc

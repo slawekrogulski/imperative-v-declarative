@@ -5,11 +5,11 @@ import flatspec.*
 import matchers.*
 import org.scalatestplus.scalacheck.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
-import wordcount.WordCount.WordCounts
+import wordcount.WordCounter.WordCounts
 
-class WordCountTest extends AnyFlatSpec with should.Matchers {
-  import WordCountTest._
-  import WordCount._
+class WordCounterTest extends AnyFlatSpec with should.Matchers {
+  import WordCounterTest._
+  import WordCounter._
 
   "imperative and declarative word count implementations" should "be equivalent" in {
     forAll(wordLists) {
@@ -29,14 +29,14 @@ class WordCountTest extends AnyFlatSpec with should.Matchers {
     }
   }
 }
-object WordCountTest {
+object WordCounterTest {
   import org.scalacheck.Gen
-  import WordCount.{Word, Words}
+  import WordCounter.{Word, Words}
 
   val words: Gen[Word] = Gen.alphaUpperChar.map(_.toString)
   val wordLists: Gen[Words] = Gen.listOf[Word](words)
 
-   object JavaWrapper extends WordCount.WordCount {
+   object JavaWrapper extends WordCounter.WordCounter {
      override def apply(words: Words): WordCounts =
        import scala.jdk.CollectionConverters._
        WordCountJava.count(words.asJava).asScala.collect {
